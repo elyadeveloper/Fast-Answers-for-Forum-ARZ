@@ -1,38 +1,52 @@
 window.button_id = 0;
 window.active_old = 0;
- 
+
+// Замените должность и ник на свои. ВАЖНО! Должность вы должны указать в творительном падеже: КураторОМ, ЗаместителЕМ ГА, ГлавнЫМ АдминистраторОМ и тд
+window.doljnost = "Куратором сервера";
+window.nick = "Elya Plugg";
+
 var button_shavar = 'value="Выбрать ответ" onclick="buttonsh_shabs()" style="margin-right: 3px;"';
 var button_shabs = '<input type="button" class="button shabs" ' + button_shavar + '>';
 $('.button--icon--reply').after(button_shabs);
- 
-function buttonsh_shabs(){
-XF.alert(`<div id="shabscontent"></div>`, "Выбрать ответ");
-addbtnscript();
+
+function buttonsh_shabs() {
+    let shabsContent = `<div id="shabscontent"></div>`;
+    XF.alert(shabsContent, "Выбрать ответ");
+    addbtnscript();
 }
- 
+
 function buttonsh_add(title, text) {
-var e = document.getElementById("js-XFUniqueId1");
-var user = e.textContent;
-var userid = e.getAttribute("data-user-id");
- 
-var h = new Date().getHours();
-var bstyle = 'margin-top: 3px;margin-left: 3px;';
-var button_addv = 'value="' + title + '" id="shabs_' + window.button_id + '" style="'+ bstyle +'"';
-var button_add = '<input type="button" class="button shabs_button" ' + button_addv + '>';
-$('#shabscontent').append(button_add);
-var text_nw = text.replace(/\{times_of_day\}/g, (4 < h && h <= 11) ? "Доброе утро" : 0 || (11 < h && h <= 15) ? "Добрый день" : 0 || (15 < h && h <= 21) ? "Добрый вечер" : 0 || "Доброй ночи");
-var text_rw = text_nw.replace(/\{user\}/g, '[USER=' + userid + ']@' + user + '[/USER]');
-$("input#shabs_" + window.button_id + ".button").bind('click', function () {
-$('div.fr-element.fr-view').append(text_rw);
-$('span.fr-placeholder').empty()
-$('div.overlay-container').remove()
-$('body').attr('class', '')
-$("a.overlay-titleCloser").trigger('click')
-})
-window.button_id++;
+    var e = document.getElementById("js-XFUniqueId1");
+    if (e) {
+        var user = e.textContent;
+        var userid = e.getAttribute("data-user-id");
+
+        var h = new Date().getHours();
+        var bstyle = 'margin-top: 3px;margin-left: 3px;';
+        var button_addv = `value="${title}" id="shabs_${window.button_id}" style="${bstyle}"`;
+        var button_add = `<input type="button" class="button shabs_button" ${button_addv}>`;
+
+        $('#shabscontent').append(button_add);
+
+        $(`input#shabs_${window.button_id}.shabs_button`).click(() => {
+            let text_rw = text.replace(/\{times_of_day\}/g,
+                h >= 4 && h <= 11 ? "Доброе утро" :
+                h > 11 && h <= 15 ? "Добрый день" :
+                h > 15 && h <= 21 ? "Добрый вечер" : "Доброй ночи"
+            );
+            text_rw = text_rw.replace(/\{user\}/g, '[USER=' + userid + ']@' + user + '[/USER]');
+            text_rw = text_rw.replace(/\{doljnost\}/g, window.doljnost);
+            text_rw = text_rw.replace(/\{nick\}/g, window.nick);
+
+            $('div.fr-element.fr-view').append(text_rw);
+            $('span.fr-placeholder').empty();
+            $('div.overlay-container').remove();
+            $('body').attr('class', '');
+            $("a.overlay-titleCloser").trigger('click');
+        });
+        window.button_id++;
+    }
 }
-// buttonsh_add('приветствие',
-// `sas`);
 function addbtnscript() {
 buttonsh_add('[--------------------------------------------[Жалобы на администрацию.]--------------------------------------------]', '  []]');
 buttonsh_add('[Жалобы на администрацию] - Передать жалобу (основному администратору)', '[CENTER][FONT=Courier New][B][SIZE=15px]{times_of_day}, {user}!<br>Я являюсь [/SIZE][COLOR=rgb(26, 188, 156)][SIZE=15px]Должность[/SIZE][/COLOR][SIZE=15px] - [/SIZE][COLOR=rgb(26, 188, 156)][SIZE=15px]Nick_Name[/SIZE][/COLOR][SIZE=15px].[/SIZE]<br>[SIZE=15px]Передал жалобу [COLOR=rgb(26, 188, 156)]администратору[/COLOR].[/SIZE][/B][/FONT]<br>[SIZE=15px][FONT=Courier New][B]Ожидайте ответ в течении [COLOR=rgb(251, 160, 38)]24-х[/COLOR] часов.[/B][/FONT][/SIZE][/CENTER]');
